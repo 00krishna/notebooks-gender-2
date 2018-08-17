@@ -1,0 +1,364 @@
+from ipywidgets import interact, interactive, fixed, interact_manual
+import ipywidgets as widgets
+from IPython.display import display, HTML, clear_output
+from IPython.core.display import Javascript
+from IPython.display import display
+import pyugend2
+import time
+import pandas as pd
+import datetime
+import math
+import builtins
+from IPython.lib import deepreload
+
+builtins.reload = deepreload.reload
+import warnings
+
+warnings.filterwarnings('ignore')
+from fitter import Fitter
+
+# Default values
+
+default_numbers_mgmt = {'f1': 3,
+                        'f2': 3,
+                        'f3': 2,
+                        'm1': 11,
+                        'm2': 12,
+                        'm3': 43}
+
+default_attrition_rate_mgmt = {'f1': 0.056,
+                               'f2': 0.00,
+                               'f3': 0.074,
+                               'm1': 0.069,
+                               'm2': 0.057,
+                               'm3': 0.040}
+
+default_hiring_rate_mgmt = {'f1': 5 / 40,
+                            'f2': 2 / 40,
+                            'f3': 1 / 40,
+                            'm1': 24 / 40,
+                            'm2': 3 / 40,
+                            'm3': 5 / 40}
+
+default_promotion_rate_mgmt = {'f1': 0.0555,
+                               'f2': 0.1905,
+                               'f3': 0.0,
+                               'm1': 0.0635,
+                               'm2': 0.1149,
+                               'm3': 0.0}
+
+default_model_settings = {'duration': 12,
+                          'lowerbound': 64,
+                          'upperbound': 84,
+                          'variation_range': 3,
+                          't_fpct': 0.25}
+
+# Create common professor labels
+prof_labels = {'f1': 'Women Assistant Professors',
+               'f2': 'Women Associate Professors',
+               'f3': 'Women Full Professors',
+               'm1': 'Men Assistant Professors',
+               'm2': 'Men Associate Professors',
+               'm3': 'Men Full Professors'}
+
+widget_sequence = ['f1', 'f2', 'f3', 'm1', 'm2', 'm3']
+
+style = {'description_width': 'initial'}
+
+
+def widget_panel(labels, default_values, number_type):
+    dict = {}
+    if number_type == 'integer':
+        for k, v in labels.items():
+            dict[k] = widgets.IntText(value=default_values[k],
+                                      description=v,
+                                      disabled=False,
+                                      style=style)
+            dict['default_' + k] = widgets.Label(value='default value: ' + str(default_values[k]))
+
+    if number_type == 'float':
+        for k, v in labels.items():
+            dict[k] = widgets.FloatText(value=default_values[k],
+                                        description=v,
+                                        disabled=False,
+                                        min=0,
+                                        max=1,
+                                        step=0.01,
+                                        style=style)
+            dict['default_' + k] = widgets.Label(value='default value: ' + str(default_values[k]))
+    widget_left = widgets.VBox([dict[k] for k in widget_sequence])
+    widget_right = widgets.VBox([dict['default_' + k] for k in widget_sequence])
+    widget = widgets.HBox([widget_left, widget_right])
+    return dict, widget
+
+
+sc1_numbers_dict, sc1_numbers_widget = widget_panel(prof_labels, default_numbers_mgmt, 'integer')
+sc2_numbers_dict, sc2_numbers_widget = widget_panel(prof_labels, default_numbers_mgmt, 'integer')
+sc3_numbers_dict, sc3_numbers_widget = widget_panel(prof_labels, default_numbers_mgmt, 'integer')
+sc1_attrition_dict, sc1_attrition_widget = widget_panel(prof_labels, default_attrition_rate_mgmt, 'float')
+sc2_attrition_dict, sc2_attrition_widget = widget_panel(prof_labels, default_attrition_rate_mgmt, 'float')
+sc3_attrition_dict, sc3_attrition_widget = widget_panel(prof_labels, default_attrition_rate_mgmt, 'float')
+sc1_hiring_dict, sc1_hiring_widget = widget_panel(prof_labels, default_hiring_rate_mgmt, 'float')
+sc2_hiring_dict, sc2_hiring_widget = widget_panel(prof_labels, default_hiring_rate_mgmt, 'float')
+sc3_hiring_dict, sc3_hiring_widget = widget_panel(prof_labels, default_hiring_rate_mgmt, 'float')
+sc1_promotion_dict, sc1_promotion_widget = widget_panel(prof_labels, default_promotion_rate_mgmt, 'float')
+sc2_promotion_dict, sc2_promotion_widget = widget_panel(prof_labels, default_promotion_rate_mgmt, 'float')
+sc3_promotion_dict, sc3_promotion_widget = widget_panel(prof_labels, default_promotion_rate_mgmt, 'float')
+
+# create larger settings widgets from smaller widgets.
+
+scenario_number_widget = widgets.VBox([widgets.HTML(value="<font size='+1'><b>Scenario 1 Settings</b></font>"),
+                                       sc1_numbers_widget,
+                                       widgets.HTML(value="<font size='+1'><b>Scenario 2 Settings</b></font>"),
+                                       sc2_numbers_widget,
+                                       widgets.HTML(value="<font size='+1'><b>Scenario 3 Settings</b></font>"),
+                                       sc3_numbers_widget])
+
+scenario_attrition_widget = widgets.VBox([widgets.HTML(value="<font size='+1'><b>Scenario 1 Settings</b></font>"),
+                                          sc1_attrition_widget,
+                                          widgets.HTML(value="<font size='+1'><b>Scenario 2 Settings</b></font>"),
+                                          sc2_attrition_widget,
+                                          widgets.HTML(value="<font size='+1'><b>Scenario 3 Settings</b></font>"),
+                                          sc3_attrition_widget])
+
+scenario_hiring_widget = widgets.VBox([widgets.HTML(value="<font size='+1'><b>Scenario 1 Settings</b></font>"),
+                                       sc1_hiring_widget,
+                                       widgets.HTML(value="<font size='+1'><b>Scenario 2 Settings</b></font>"),
+                                       sc2_hiring_widget,
+                                       widgets.HTML(value="<font size='+1'><b>Scenario 3 Settings</b></font>"),
+                                       sc3_hiring_widget])
+
+scenario_promotion_widget = widgets.VBox([widgets.HTML(value="<font size='+1'><b>Scenario 1 Settings</b></font>"),
+                                          sc1_promotion_widget,
+                                          widgets.HTML(value="<font size='+1'><b>Scenario 2 Settings</b></font>"),
+                                          sc2_promotion_widget,
+                                          widgets.HTML(value="<font size='+1'><b>Scenario 3 Settings</b></font>"),
+                                          sc3_promotion_widget])
+
+## Model Settings Widget
+
+model_settings_dict = {'lowerbound': widgets.IntText(value=default_model_settings['lowerbound'],
+                                                     description='Department Size Lowerbound',
+                                                     disabled=False,
+                                                     style=style),
+                       'upperbound': widgets.IntText(value=default_model_settings['upperbound'],
+                                                     description='Department Size Upperbound',
+                                                     disabled=False,
+                                                     style=style),
+                       'variation_range': widgets.IntText(value=default_model_settings['variation_range'],
+                                                          description='Department Size Churn Range',
+                                                          disabled=False,
+                                                          style=style),
+                       'duration': widgets.IntText(value=default_model_settings['duration'],
+                                                   description='Simulation Duration',
+                                                   disabled=False,
+                                                   style=style),
+                       'target_percentage_women': widgets.FloatText(value=default_model_settings['t_fpct'],
+                                                                    description='Target Women Faculty Percentage',
+                                                                    disabled=False,
+                                                                    min=0,
+                                                                    max=1.0,
+                                                                    step=0.01,
+                                                                    style=style),
+                       'default_lowerbound': widgets.Label(
+                           value='default value: ' + str(default_model_settings['lowerbound'])),
+                       'default_upperbound': widgets.Label(
+                           value='default value: ' + str(default_model_settings['upperbound'])),
+                       'default_variation_range': widgets.Label(
+                           value='default value: ' + str(default_model_settings['variation_range'])),
+                       'default_target_percentage_women': widgets.Label(
+                           value='default value: ' + str(default_model_settings['t_fpct'])),
+                       'default_duration': widgets.Label(
+                           value='default value: ' + str(default_model_settings['duration'])),
+                       }
+
+model_settings_left = widgets.VBox([model_settings_dict['duration'],
+                                    model_settings_dict['lowerbound'],
+                                    model_settings_dict['upperbound'],
+                                    model_settings_dict['variation_range'],
+                                    model_settings_dict['target_percentage_women']])
+
+model_settings_right = widgets.VBox([model_settings_dict['default_duration'],
+                                     model_settings_dict['default_lowerbound'],
+                                     model_settings_dict['default_upperbound'],
+                                     model_settings_dict['default_variation_range'],
+                                     model_settings_dict['default_target_percentage_women']])
+
+model_settings_widget = widgets.HBox([model_settings_left, model_settings_right])
+
+
+# Widget for growth settings
+
+def growth_widget_panel(duration):
+    style = {'description_width': 'initial'}
+    widget_dict = {}
+    vbox_list = []
+    # build linear growth widget
+    widget_dict['label_linear_growth'] = widgets.Label(value='Linear Growth Annual Rate(decimal)')
+    widget_dict['widget_linear_growth_rate'] = widgets.FloatText(value=0.015,
+                                                                 description='',
+                                                                 disabled=False,
+                                                                 min=0,
+                                                                 max=0.5,
+                                                                 step=0.01,
+                                                                 style=style)
+    widget_dict['hbox_linear_growth_rate'] = widgets.HBox([widget_dict['label_linear_growth'],
+                                                           widget_dict['widget_linear_growth_rate']])
+
+    vbox_list.extend([widget_dict['hbox_linear_growth_rate']])
+    # build 3 year growth rate widget
+    increments3 = math.ceil(duration / 3)
+    widget_dict['increment3'] = increments3
+    widget_dict['hbox_label_increment3_section'] = widgets.HBox([widgets.Label(value='3 Year Growth Rates(decimal)')])
+    vbox_list.extend([widget_dict['hbox_label_increment3_section']])
+
+    for i in range(increments3):
+        widget_dict['label_increment3_' + str(i)] = widgets.Label(value='Rate')
+        widget_dict['widget_increment3_' + str(i)] = widgets.FloatText(value=0.0,
+                                                                       description='',
+                                                                       disabled=False,
+                                                                       min=0,
+                                                                       max=1.0,
+                                                                       step=0.01,
+                                                                       style=style)
+
+        widget_dict['hbox_increment3_' + str(i)] = widgets.HBox([widget_dict['label_increment3_' + str(i)],
+                                                                 widget_dict['widget_increment3_' + str(i)]])
+    increment_3_vbox_list = [widget_dict['hbox_increment3_' + str(i)] for i in range(increments3)]
+    widget_dict['vbox_increment3'] = widgets.VBox(increment_3_vbox_list)
+    vbox_list.extend([widget_dict['vbox_increment3']])
+
+    # build 4 year growth rate widget
+
+    increments4 = math.ceil(duration / 4)
+    widget_dict['increment4'] = increments4
+    widget_dict['hbox_label_increment4_section'] = widgets.HBox([widgets.Label(value='4 Year Growth Rates(decimal)')])
+    vbox_list.extend([widget_dict['hbox_label_increment4_section']])
+
+    for i in range(increments4):
+        widget_dict['label_increment4_' + str(i)] = widgets.Label(value='Rate')
+        widget_dict['widget_increment4_' + str(i)] = widgets.FloatText(value=0.0,
+                                                                       description='',
+                                                                       disabled=False,
+                                                                       min=0,
+                                                                       max=1.0,
+                                                                       step=0.01,
+                                                                       style=style)
+
+        widget_dict['hbox_increment4_' + str(i)] = widgets.HBox([widget_dict['label_increment4_' + str(i)],
+                                                                 widget_dict['widget_increment4_' + str(i)]])
+    increment_4_vbox_list = [widget_dict['hbox_increment4_' + str(i)] for i in range(increments4)]
+    widget_dict['vbox_increment4'] = widgets.VBox(increment_4_vbox_list)
+    vbox_list.extend([widget_dict['vbox_increment4']])
+    widget = widgets.VBox(vbox_list)
+    return widget_dict, widget
+
+
+growth_rate_dict, growth_rate_widget = growth_widget_panel(default_model_settings['duration'])
+
+# Generic name constants
+columns = ['Prof. Group',
+           'Initial Number',
+           'Attrition Rate',
+           'Hiring Rate',
+           'Promotion Rate']
+row_labels = ['Women Assistant Professors',
+              'Women Associate Professors',
+              'Women Full Professors',
+              'Men Assistant Professors',
+              'Men Associate Professors',
+              'Men Full Professors']
+
+simulation_columns = ['Simulation Duration (years)',
+                      'Department Size Lowerbound',
+                      'Department Size Upperbound',
+                      'Department Churn Range']
+
+
+
+def display_model_settings_scenario1():
+    df = pd.DataFrame({'Prof. Group': row_labels,
+                       'Initial Number': [sc1_numbers_dict[k].value for k in widget_sequence],
+                       'Attrition Rate': [sc1_attrition_dict[k].value for k in widget_sequence],
+                       'Hiring Rate': [sc1_hiring_dict[k].value for k in widget_sequence],
+                       'Promotion Rate': [sc1_promotion_dict[k].value for k in widget_sequence]})
+    df.set_index('Prof. Group')
+    df = df[columns]
+    out = widgets.Output()
+    with out:
+        display(df)
+
+    return widgets.HBox([out])
+
+
+def display_model_settings_scenario2():
+    df = pd.DataFrame({'Prof. Group': row_labels,
+                       'Initial Number': [sc2_numbers_dict[k].value for k in widget_sequence],
+                       'Attrition Rate': [sc2_attrition_dict[k].value for k in widget_sequence],
+                       'Hiring Rate': [sc2_hiring_dict[k].value for k in widget_sequence],
+                       'Promotion Rate': [sc2_promotion_dict[k].value for k in widget_sequence]})
+    df.set_index('Prof. Group')
+    df = df[columns]
+    out = widgets.Output()
+    with out:
+        display(df)
+
+    return widgets.HBox([out])
+
+
+def display_model_settings_scenario3():
+    df = pd.DataFrame({'Prof. Group': row_labels,
+                       'Initial Number': [sc3_numbers_dict[k].value for k in widget_sequence],
+                       'Attrition Rate': [sc3_attrition_dict[k].value for k in widget_sequence],
+                       'Hiring Rate': [sc3_hiring_dict[k].value for k in widget_sequence],
+                       'Promotion Rate': [sc3_promotion_dict[k].value for k in widget_sequence]})
+    df.set_index('Prof. Group')
+    df = df[columns]
+    out = widgets.Output()
+    with out:
+        display(df)
+
+    return widgets.HBox([out])
+
+
+def display_simulation_settings():
+    df = pd.DataFrame({'Simulation Duration (years)': [model_settings_dict['duration'].value],
+                       'Department Size Lowerbound': [model_settings_dict['lowerbound'].value],
+                       'Department Size Upperbound': [model_settings_dict['upperbound'].value],
+                       'Department Churn Range': [model_settings_dict['variation_range'].value]})
+    df = df[simulation_columns]
+    out = widgets.Output()
+    with out:
+        display(df)
+    return widgets.HBox([out])
+
+
+def display_model_choices():
+    model_choices_list = [i for i in model_choice_widget_right.value]
+    df = pd.DataFrame(model_choices_list, columns=['Model Names'])
+    out = widgets.Output()
+    with out:
+        display(df)
+    return widgets.HBox([out])
+
+
+def display_growth_settings():
+    model_dict = {}
+    model_dict['label_linear_growth'] = widgets.Label(value='Linear Growth Rate:')
+    model_dict['value_linear_growth'] = widgets.Label(value=str(growth_rate_dict['widget_linear_growth_rate'].value))
+    model_dict['hbox_linear_growth'] = widgets.HBox([model_dict['label_linear_growth'],
+                                                     model_dict['value_linear_growth']])
+    model_dict['label_3yr_growth'] = widgets.Label(value='3 Year Growth Rates:')
+    yr3_values = [growth_rate_dict['widget_increment3_' + str(i)].value for i in range(growth_rate_dict['increment3'])]
+    model_dict['value_3yr_growth'] = widgets.Label(value=','.join(str(x) for x in yr3_values))
+    model_dict['hbox_3yr_growth'] = widgets.HBox([model_dict['label_3yr_growth'],
+                                                  model_dict['value_3yr_growth']])
+
+    model_dict['label_4yr_growth'] = widgets.Label(value='4 Year Growth Rates:')
+    yr4_values = [growth_rate_dict['widget_increment4_' + str(i)].value for i in range(growth_rate_dict['increment4'])]
+    model_dict['value_4yr_growth'] = widgets.Label(value=','.join(str(x) for x in yr4_values))
+    model_dict['hbox_4yr_growth'] = widgets.HBox([model_dict['label_4yr_growth'],
+                                                  model_dict['value_4yr_growth']])
+    return widgets.VBox([model_dict['hbox_linear_growth'],
+                         model_dict['hbox_3yr_growth'],
+                         model_dict['hbox_4yr_growth']])
