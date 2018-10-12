@@ -52,23 +52,4 @@ def data_export_widget():
     return widget_dict, widget
 
 
-data_export_button_dict, button_panel = data_export_widget()
-
-def on_button_clicked_no_growth(b):
-    model_no_growth.summary_matrix.to_csv('no_growth_summary.csv', index=False, header=True)
-
-def on_button_clicked_linear_growth(b):
-    model_linear_growth.summary_matrix.to_csv('linear_growth_summary.csv', index=False, header=True)
-
-def on_button_clicked_3yr_growth(b):
-    model_3yr_growth_rate.summary_matrix.to_csv('3yr_growth_summary.csv', index=False, header=True)
-    
-def on_button_clicked_4yr_growth(b):
-    model_4yr_growth_rate.summary_matrix.to_csv('4yr_growth_summary.csv', index=False, header=True)
-    
-    
-data_export_button_dict['button_no_growth'].on_click(on_button_clicked_no_growth)    
-data_export_button_dict['button_linear_growth'].on_click(on_button_clicked_linear_growth)    
-data_export_button_dict['button_3yr_growth'].on_click(on_button_clicked_3yr_growth)    
-data_export_button_dict['button_4yr_growth'].on_click(on_button_clicked_4yr_growth)    
 
