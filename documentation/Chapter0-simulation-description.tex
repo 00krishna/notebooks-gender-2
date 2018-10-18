@@ -1,0 +1,77 @@
+
+\documentclass[12pt, a4paper, oneside, headinclude, footinclude,english]{article}
+
+\input{/home/krishnab/Dropbox/backup/templates/latex/math_notes/structure.tex}
+\input{/home/krishnab/Dropbox/backup/templates/latex/math_macros/math_macros.tex}
+\title{\normalfont\spacedallcaps{Title}}
+
+\author{\spacedlowsmallcaps{Krishna Bhogaonker}} 
+ 
+\date{\today\\version 0.1}
+\makeatletter
+%\providecommand{\@nil}
+\makeatother
+
+
+\begin{document}
+
+\renewcommand{\sectionmark}[1]{\markright{\spacedlowsmallcaps{#1}}} 
+\lehead{\mbox{\llap{\small\thepage\kern1em\color{halfgray} \vline}\color{halfgray}\hspace{0.5em}\rightmark\hfil}} 
+
+
+
+\pagestyle{scrheadings} 
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS & LISTS OF FIGURES AND TABLES
+%----------------------------------------------------------------------------------------
+
+\maketitle 
+
+\setcounter{tocdepth}{2}
+
+\tableofcontents 
+
+% \listoffigures 
+
+% \listoftables
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\section*{Abstract}
+
+Fill
+%----------------------------------------------------------------------------------------
+%	AUTHOR AFFILIATIONS
+%----------------------------------------------------------------------------------------
+
+%\let\thefootnote\relax\footnotetext{* \textit{}}
+
+%\let\thefootnote\relax\footnotetext{\textsuperscript{1} \textit{}}
+
+%----------------------------------------------------------------------------------------
+
+% \newpage 
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+
+\section{\printdate{2014/01/03} Some notes}
+
+This is the first section. 
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\renewcommand{\refname}{\spacedlowsmallcaps{References}} 
+
+\bibliographystyle{unsrt}
+
+\bibliography{/home/krishnab/Dropbox/bibtex/library.bib}
+
+%----------------------------------------------------------------------------------------
+\end{document}
