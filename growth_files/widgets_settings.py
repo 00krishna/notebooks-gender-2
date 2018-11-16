@@ -19,32 +19,32 @@ from fitter import Fitter
 
 ## Default values
 
-default_numbers_mgmt = {'f1': 3,
+default_numbers_mgmt = {'f1': 2,
                        'f2': 3,
-                       'f3':2,
+                       'f3':3,
                        'm1':11,
-                       'm2':12,
-                       'm3':43}
+                       'm2':13,
+                       'm3':42}
 
-default_attrition_rate_mgmt = {'f1': 0.056,
+default_attrition_rate_mgmt = {'f1': 0.0615,
                        'f2': 0.00,
-                       'f3':0.074,
-                       'm1':0.069,
-                       'm2':0.057,
-                       'm3':0.040}
+                       'f3':0.0600,
+                       'm1':0.0859,
+                       'm2':0.0473,
+                       'm3':0.0414}
                         
-default_hiring_rate_mgmt = {'f1': 5/40,
-                       'f2': 2/40,
-                       'f3':1/40,
-                       'm1':24/40,
-                       'm2':3/40,
-                       'm3':5/40}
+default_hiring_rate_mgmt = {'f1': 14/68,
+                       'f2': 4/68,
+                       'f3':0/68,
+                       'm1':36/68,
+                       'm2':8/68,
+                       'm3':6/68}
 
-default_promotion_rate_mgmt = {'f1': 0.0555,
-                       'f2': 0.1905,
+default_promotion_rate_mgmt = {'f1': 0.0769,
+                       'f2': 0.1111,
                        'f3':0.0,
-                       'm1':0.0635,
-                       'm2':0.1149,
+                       'm1':0.0707,
+                       'm2':0.0946,
                        'm3':0.0}
     
 default_model_settings = {'duration':12,
@@ -258,6 +258,16 @@ def display_model_settings():
         display(df)
 
     return widgets.HBox([out])
+
+def display_model_settings_nowidget():
+    df = pd.DataFrame({'Prof. Group': row_labels,
+                           'Initial Number': [numbers_dict[k].value for k in widget_sequence],
+                           'Attrition Rate': [attrition_dict[k].value for k in widget_sequence],
+                           'Hiring Rate': [hiring_dict[k].value for k in widget_sequence],
+                           'Promotion Rate': [promotion_dict[k].value for k in widget_sequence]})
+    df.set_index('Prof. Group')
+    df = df[columns]
+    return df
 
 def display_simulation_settings():
     df = pd.DataFrame({'Simulation Duration (years)': [model_settings_dict['duration'].value],
