@@ -47,7 +47,7 @@ default_promotion_rate_mgmt = {'f1': 0.0555,
                                'm2': 0.1149,
                                'm3': 0.0}
 
-default_model_settings = {'duration': 12,
+default_model_settings = {'duration': 13,
                           'lowerbound': 64,
                           'upperbound': 84,
                           'variation_range': 3,
