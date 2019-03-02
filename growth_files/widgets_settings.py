@@ -33,12 +33,12 @@ default_attrition_rate_mgmt = {'f1': 0.0615,
                        'm2':0.0473,
                        'm3':0.0414}
                         
-default_hiring_rate_mgmt = {'f1': 14/68,
-                       'f2': 4/68,
-                       'f3':0/68,
-                       'm1':36/68,
-                       'm2':8/68,
-                       'm3':6/68}
+default_hiring_rate_mgmt = {'f1': round(14/68, 3),
+                       'f2': round(4/68, 3),
+                       'f3': round(0/68, 3),
+                       'm1': round(36/68, 3),
+                       'm2': round(8/68, 3),
+                       'm3': round(6/68, 3)}
 
 default_promotion_rate_mgmt = {'f1': 0.0769,
                        'f2': 0.1111,
