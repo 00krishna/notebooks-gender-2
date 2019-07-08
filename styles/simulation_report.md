@@ -105,6 +105,15 @@ Model Annotation
   </tr>
 </table>
 
+<p>Growth rate settings</p> 
+<p>Linear Growth</p>
+{{linear_growth_info}}
+
+<p>3-Year Growth</p>
+{{threeyr_growth_info}}
+
+<p>4-Year Growth</p>
+{{fouryr_growth_info}}
 
 <h2 style = "font-family:Utopia;font-size:16px;font-style:regular;">Comparison of Model 3 Growth Models: Change in Proportion of Women</h2>
 
