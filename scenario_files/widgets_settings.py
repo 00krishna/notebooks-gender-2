@@ -254,7 +254,9 @@ def growth_widget_panel(duration):
     return widget_dict, widget
 
 
-growth_rate_dict, growth_rate_widget = growth_widget_panel(default_model_settings['duration'])
+sc1_growth_rate_dict, sc1_growth_rate_widget = growth_widget_panel(default_model_settings['duration'])
+sc2_growth_rate_dict, sc2_growth_rate_widget = growth_widget_panel(default_model_settings['duration'])
+sc3_growth_rate_dict, sc3_growth_rate_widget = growth_widget_panel(default_model_settings['duration'])
 
 # Generic name constants
 columns = ['Prof. Group',
@@ -342,20 +344,20 @@ def display_model_choices():
     return widgets.HBox([out])
 
 
-def display_growth_settings():
+def display_growth_settings(growth_dict):
     model_dict = {}
     model_dict['label_linear_growth'] = widgets.Label(value='Linear Growth Rate:')
-    model_dict['value_linear_growth'] = widgets.Label(value=str(growth_rate_dict['widget_linear_growth_rate'].value))
+    model_dict['value_linear_growth'] = widgets.Label(value=str(growth_dict['widget_linear_growth_rate'].value))
     model_dict['hbox_linear_growth'] = widgets.HBox([model_dict['label_linear_growth'],
                                                      model_dict['value_linear_growth']])
     model_dict['label_3yr_growth'] = widgets.Label(value='3 Year Growth Rates:')
-    yr3_values = [growth_rate_dict['widget_increment3_' + str(i)].value for i in range(growth_rate_dict['increment3'])]
+    yr3_values = [growth_dict['widget_increment3_' + str(i)].value for i in range(growth_dict['increment3'])]
     model_dict['value_3yr_growth'] = widgets.Label(value=','.join(str(x) for x in yr3_values))
     model_dict['hbox_3yr_growth'] = widgets.HBox([model_dict['label_3yr_growth'],
                                                   model_dict['value_3yr_growth']])
 
     model_dict['label_4yr_growth'] = widgets.Label(value='4 Year Growth Rates:')
-    yr4_values = [growth_rate_dict['widget_increment4_' + str(i)].value for i in range(growth_rate_dict['increment4'])]
+    yr4_values = [growth_dict['widget_increment4_' + str(i)].value for i in range(growth_dict['increment4'])]
     model_dict['value_4yr_growth'] = widgets.Label(value=','.join(str(x) for x in yr4_values))
     model_dict['hbox_4yr_growth'] = widgets.HBox([model_dict['label_4yr_growth'],
                                                   model_dict['value_4yr_growth']])
