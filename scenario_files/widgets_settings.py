@@ -10,12 +10,11 @@ import datetime
 import math
 import builtins
 from IPython.lib import deepreload
-
 builtins.reload = deepreload.reload
 import warnings
-
 warnings.filterwarnings('ignore')
 from fitter import Fitter
+import numpy as np
 
 # Default values
 
@@ -75,6 +74,9 @@ def widget_panel(labels, default_values, number_type):
                                       disabled=False,
                                       style=style)
             dict['default_' + k] = widgets.Label(value='default value: ' + str(default_values[k]))
+        widget_left = widgets.VBox([dict[k] for k in widget_sequence])
+        widget_right = widgets.VBox([dict['default_'+k] for k in widget_sequence])
+        widget = widgets.HBox([widget_left, widget_right])
 
     if number_type == 'float':
         for k, v in labels.items():
@@ -86,9 +88,16 @@ def widget_panel(labels, default_values, number_type):
                                         step=0.01,
                                         style=style)
             dict['default_' + k] = widgets.Label(value='default value: ' + str(default_values[k]))
-    widget_left = widgets.VBox([dict[k] for k in widget_sequence])
-    widget_right = widgets.VBox([dict['default_' + k] for k in widget_sequence])
-    widget = widgets.HBox([widget_left, widget_right])
+
+            initial_average = round(np.mean([default_values[k] for k in widget_sequence]), 4)
+            dict['avgll'] = widgets.HTML(value = 'Average rate: ')
+            dict['avgl'] = widgets.HTML(value = str(initial_average))
+            dict['davgll'] = widgets.HTML(value='Default average rate: ')
+            dict['davgl'] = widgets.HTML(value=str(initial_average))
+
+        widget_left = widgets.VBox([dict[k] for k in widget_sequence] + [dict['davgll'], dict['avgll']])
+        widget_right = widgets.VBox([dict['default_'+k] for k in widget_sequence]+ [dict['davgl'], dict['avgl']])
+        widget = widgets.HBox([widget_left, widget_right])
     return dict, widget
 
 

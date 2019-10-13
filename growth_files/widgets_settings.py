@@ -162,7 +162,7 @@ def growth_widget_panel(duration):
     vbox_list = []
     # build linear growth widget
     widget_dict['label_linear_growth'] = widgets.Label(value = 'Linear Growth Annual Rate(decimal)')
-    widget_dict['widget_linear_growth_rate'] = widgets.FloatText(value = 0.015,
+    widget_dict['widget_linear_growth_rate'] = widgets.FloatText(value = 0.0167,
                                      description= '',
                                      disabled = False,
                                      min = 0,
