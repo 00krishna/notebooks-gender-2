@@ -18,47 +18,48 @@ import numpy as np
 
 # Default values
 
-default_numbers_mgmt = {'f1': 3,
-                        'f2': 3,
-                        'f3': 2,
-                        'm1': 11,
-                        'm2': 12,
-                        'm3': 43}
 
-default_attrition_rate_mgmt = {'f1': 0.056,
-                               'f2': 0.00,
-                               'f3': 0.074,
-                               'm1': 0.069,
-                               'm2': 0.057,
-                               'm3': 0.040}
+default_numbers_mgmt = {'f1': 2,
+                       'f2': 3,
+                       'f3':3,
+                       'm1':11,
+                       'm2':13,
+                       'm3':42}
 
-default_hiring_rate_mgmt = {'f1': 5 / 40,
-                            'f2': 2 / 40,
-                            'f3': 1 / 40,
-                            'm1': 24 / 40,
-                            'm2': 3 / 40,
-                            'm3': 5 / 40}
+default_attrition_rate_mgmt = {'f1': 0.0615,
+                       'f2': 0.00,
+                       'f3':0.0600,
+                       'm1':0.0859,
+                       'm2':0.0473,
+                       'm3':0.0414}
+                        
+default_hiring_rate_mgmt = {'f1': round(14/68, 3),
+                       'f2': round(4/68, 3),
+                       'f3': round(0/68, 3),
+                       'm1': round(36/68, 3),
+                       'm2': round(8/68, 3),
+                       'm3': round(6/68, 3)}
 
-default_promotion_rate_mgmt = {'f1': 0.0555,
-                               'f2': 0.1905,
-                               'f3': 0.0,
-                               'm1': 0.0635,
-                               'm2': 0.1149,
-                               'm3': 0.0}
-
-default_model_settings = {'duration': 13,
+default_promotion_rate_mgmt = {'f1': 0.0769,
+                       'f2': 0.1111,
+                       'f3':0.0,
+                       'm1':0.0707,
+                       'm2':0.0946,
+                       'm3':0.0}
+    
+default_model_settings = {'duration':20,
                           'lowerbound': 64,
-                          'upperbound': 84,
-                          'variation_range': 3,
-                          't_fpct': 0.25}
+                          'upperbound':84,
+                          'variation_range':3,
+                          't_fpct': 0.25} 
 
 # Create common professor labels
 prof_labels = {'f1': 'Women Assistant Professors',
-               'f2': 'Women Associate Professors',
-               'f3': 'Women Full Professors',
-               'm1': 'Men Assistant Professors',
-               'm2': 'Men Associate Professors',
-               'm3': 'Men Full Professors'}
+              'f2': 'Women Associate Professors',
+              'f3': 'Women Full Professors',
+              'm1': 'Men Assistant Professors',
+              'm2': 'Men Associate Professors',
+              'm3': 'Men Full Professors'}
 
 widget_sequence = ['f1', 'f2', 'f3', 'm1', 'm2', 'm3']
 
